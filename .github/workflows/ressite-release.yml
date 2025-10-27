@@ -1,0 +1,38 @@
+name: CI/CD Spring Boot with Docker - PROD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25' # Specify your Java version
+          distribution: 'temurin' # Or 'adopt', 'zulu', etc.
+          cache: 'maven' # Cache Maven dependencies
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests # Build the Spring Boot application, skipping tests for speed
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ ressite_secrets.DOCKER_USERNAME }}
+          password: ${{ ressite_secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ ressite_secrets.DOCKER_USERNAME }}/your-repo-name:latest # Replace with your Docker Hub username and repository name
+          file: ./Dockerfile # Path to your Dockerfile
