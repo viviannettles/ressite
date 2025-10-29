@@ -13,16 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to Render Docker registry
-        run: |
-          echo ${{ secrets.RENDER_API_KEY }} | docker login registry.render.com -u _ --password-stdin
-
-      - name: Build Docker image
-        run: docker build -t registry.render.com/ressite/ressite:latest .
-
-      - name: Push Docker image
-        run: docker push registry.render.com/ressite/ressite:latest
-
       - name: Trigger deploy on Render
         run: |
           curl -X POST \
