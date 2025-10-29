@@ -43,7 +43,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>ressite-aws</finalName>
+		<finalName>ressite-render</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
