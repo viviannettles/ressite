@@ -1,0 +1,31 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Render Docker registry
+        run: |
+          echo ${{ secrets.RENDER_API_KEY }} | docker login registry.render.com -u _ -p $(cat)
+
+      - name: Build Docker image
+        run: docker build -t registry.render.com/<your-service-name>/ressite:latest .
+
+      - name: Push Docker image
+        run: docker push registry.render.com/<your-service-name>/ressite:latest
+
+      - name: Trigger deploy on Render
+        run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          https://api.render.com/deploy/srv-<your-service-id>
