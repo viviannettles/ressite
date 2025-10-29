@@ -15,17 +15,17 @@ jobs:
 
       - name: Log in to Render Docker registry
         run: |
-          echo ${{ secrets.RENDER_API_KEY }} | docker login registry.render.com -u _ -p $(cat)
+          echo ${{ secrets.RENDER_API_KEY }} | docker login registry.render.com -u _ --password-stdin
 
       - name: Build Docker image
-        run: docker build -t registry.render.com/<your-service-name>/ressite:latest .
+        run: docker build -t registry.render.com/ressite/ressite:latest .
 
       - name: Push Docker image
-        run: docker push registry.render.com/<your-service-name>/ressite:latest
+        run: docker push registry.render.com/ressite/ressite:latest
 
       - name: Trigger deploy on Render
         run: |
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
           -H "Content-Type: application/json" \
-          https://api.render.com/deploy/srv-<your-service-id>
+          https://api.render.com/deploy/srv-<RENDER_SERVICE_ID>
